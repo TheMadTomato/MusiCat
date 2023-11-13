@@ -9,15 +9,18 @@ from tkinter import filedialog
 
 class MusiCatApp:
     def __init__(self, root):
+        # Set up root window
         self.root = root
         self.root.title("MusiCat")
         self.root.geometry("790x350")
         self.root.resizable(False, False)
 
-        # Use os.path.join to construct file paths
+        # Set up icon
         logo_path = os.path.join(".", "logo_1.png")
         self.logo = tk.PhotoImage(file=logo_path)
+        self.root.iconphoto(False, self.logo)
 
+        # Set up widgets
         self.link_label = tk.Label(root, text="Enter Youtube Link:")
         self.link_entry = tk.Entry(root, width=40)
 
@@ -46,7 +49,7 @@ class MusiCatApp:
         self.setup_ui()
 
     def setup_ui(self):
-        # Simplify grid calls
+        # Set up widgets in grid
         self.link_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
         self.link_entry.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky="w")
 
@@ -68,6 +71,7 @@ class MusiCatApp:
         self.progressbar.grid(row=5, column=0, columnspan=4, pady=10)
 
     def toggle_audio(self):
+        # Toggle audio formats
         if self.audio_var.get() == 1:
             self.audio_formats_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
             self.audio_formats_combobox.grid(row=2, column=1, padx=10, pady=5, sticky="w")
@@ -76,6 +80,7 @@ class MusiCatApp:
             self.audio_formats_combobox.grid_forget()
 
     def toggle_video(self):
+        # Toggle video formats
         if self.video_var.get() == 1:
             self.video_formats_label.grid(row=2, column=2, padx=10, pady=5, sticky="w")
             self.video_formats_combobox.grid(row=2, column=3, padx=10, pady=5, sticky="w")
@@ -84,11 +89,13 @@ class MusiCatApp:
             self.video_formats_combobox.grid_forget()
 
     def browse_destination(self):
+        # Browse for destination folder
         destination_folder = filedialog.askdirectory()
         self.destination_entry.delete(0, tk.END)
         self.destination_entry.insert(0, destination_folder)
 
     def download(self):
+        # Download video/audio
         link = self.link_entry.get()
         audio_format = self.audio_formats_combobox.get() if self.audio_var.get() == 1 else None
         video_format = self.video_formats_combobox.get() if self.video_var.get() == 1 else None
@@ -97,7 +104,7 @@ class MusiCatApp:
         if not link or (not audio_format and not video_format) or not destination:
             messagebox.showerror("Error", "Please fill in all the required fields.")
             return
-
+        # Process download
         try:
             total_steps = (1 if audio_format else 0) + (1 if video_format else 0)
             current_step = 0
@@ -133,6 +140,7 @@ class MusiCatApp:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
 def move_to_folder(file, destination, folder_name):
+    # Move file to folder in destination depending on OS
     os_type = platform.system()
     if os_type in ['Windows', 'Linux', 'Darwin']:
         destination = os.path.join(destination, folder_name)
@@ -146,6 +154,7 @@ def move_to_folder(file, destination, folder_name):
         print(f"Error moving file: {e}")
 
 def download_audio(link, audio_format, destination):
+    # Download audio function with yt-dlp module
     audio_format = audio_format.upper()
     with yt_dlp.YoutubeDL({'extract_audio': True, 'format': 'bestaudio', 'outtmpl': os.path.join(destination, '%(title)s.'+audio_format)}) as video:
         info_dict = video.extract_info(link, download=True)
@@ -156,6 +165,7 @@ def download_audio(link, audio_format, destination):
         move_to_folder(video_title+'.'+audio_format, destination, "Music")
 
 def download_video(link, video_format, destination):
+    # Download video function with yt-dlp module
     video_format = video_format.upper()
     with yt_dlp.YoutubeDL({'format': 'bestvideo+bestaudio', 'outtmpl': os.path.join(destination, '%(title)s.'+video_format)}) as video:
         info_dict = video.extract_info(link, download=True)
