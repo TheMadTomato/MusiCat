@@ -34,6 +34,10 @@ The script uses the `yt-dlp` library, allowing you to configure various options.
 - Fix the Progress bar.
 - Continue working on CLI version.
 
+## Notes
+
+The `MusiCatQT` and `MusiCatGTK` are only test programs that are not quite functional. Added them to try the porgram in other gui options. mayb be supported in the future.
+
 ## Contributing
 
 Feel free to contribute to the project by forking the repository, making improvements, and creating a pull request. Your suggestions and contributions are highly appreciated.
